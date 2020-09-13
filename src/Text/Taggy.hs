@@ -1,4 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE QuasiQuotes #-}
 -- |
 -- Module       : Text.Taggy
 -- Copyright    : (c) 2014 Alp Mestanogullari, Vikram Verma
@@ -49,3 +50,31 @@ import Text.Taggy.Types
 import Text.Taggy.Parser
 import Text.Taggy.DOM
 import Text.Taggy.Renderer
+
+import Data.Text.Lazy
+import Text.RawString.QQ
+import qualified Data.Text as T
+import qualified Data.Text.IO as T
+import Data.Attoparsec.Text.Lazy (Result(..))
+
+t :: Text
+t = "<p>\n<q>God gave them over to a <qex>reprobate</qex> mind.</q>\n<rj><qau>Rom. i. 28.</qau></rj>\n[<source>1913 Webster</source>]</p>\n</wrapper>"
+   
+brokeAF :: Text
+brokeAF = [r|<wrapper><p>[<source>1913 Webster</source>]</p>
+<q>God gave them over to a <qex>reprobate</qex> mind.
+</q>
+<rj><qau>Rom. i. 28.</qau></rj><br/
+[<source>1913 Webster</source>]</p>
+</wrapper>
+|]
+
+
+deepContents :: [Node] -> [T.Text]
+deepContents [] = []
+deepContents (h:t) = case h of
+                       NodeContent c -> c : deepContents t
+                       NodeElement (Element _ _ children) -> deepContents children ++ deepContents t
+
+
+go = T.putStrLn . T.concat . deepContents
