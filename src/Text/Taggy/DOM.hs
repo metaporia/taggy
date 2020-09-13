@@ -8,7 +8,7 @@
 -- License      : BSD3
 -- Maintainer   : alpmestan@gmail.com
 -- Stability    : experimental
--- 
+--
 -- This module will help you represent
 -- an HTML or XML document as a tree
 -- and let you traverse it in whatever
@@ -49,7 +49,7 @@ type AttrValue = Text
 --   specified withing that tag, and all the children nodes
 --   of that element. An 'Element' is basically anything but
 --   \"raw\" content.
-data Element = 
+data Element =
   Element { eltName     :: !Text -- ^ name of the element. e.g "a" for <a>
           , eltAttrs    :: !(HashMap AttrName AttrValue) -- ^ a (hash)map from attribute names to attribute values
           , eltChildren :: [Node] -- ^ children 'Node's
@@ -109,13 +109,16 @@ newtype Domify a = Domify { runDomify :: [Tag] -> ([Tag], a) }
 instance Applicative Domify where
   pure x =
     Domify (\tags -> (tags, x))
-  liftA2 f (Domify a) (Domify b) =
-    Domify $ \tags ->
-      let (tags', x) = a tags
-          (tags'', y) = b tags'
-      in (tags'', f x y)
-      
-  
+  (<*>) = liftA2' id
+
+liftA2' :: (a -> b ->  c) -> Domify a -> Domify b -> Domify c
+liftA2' f (Domify a) (Domify b) =
+  Domify $ \tags ->
+    let (tags', x) = a tags
+        (tags'', y) = b tags'
+    in (tags'', f x y)
+
+
 instance Monad Domify where
   Domify a >>= f = Domify $ \tags ->
     let (tags', x) = a tags
