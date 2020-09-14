@@ -5,6 +5,20 @@ An attoparsec based html parser. [![Build Status](https://secure.travis-ci.org/a
 
 Currently very WIP but already supports a fairly decent range of common websites. I haven't managed to find a website with which it chokes, using the current parser. The performance is quite promising.
 
+Changes in this fork
+====================
+
+- (DONE) Convert GCIDE entities of the form `\'xx` where `xx` is a hex escape code. The
+  conversion table was extracted from the GNU GCIDE dictionary (v0.51)--see
+  webfont.txt in the GCIDE repo. This required alteration of the tag parser.
+
+- (TODO) Optionally ignore certain tags during domification. Why? Because
+  GCIDE's SGML-like markup is malformed and (mostly) due to the conflicts
+  between semantic and typographic tags. What dico's C parser does is simply
+  ignore paragraphs, a route vastly preferable to manually correcting each
+  offending site (not to mention that there is frequently no obvious correction
+  that doesn't corrupt the original document structure).
+
 Using `taggy`
 =============
 
@@ -32,8 +46,8 @@ import Text.Taggy (run)
 taggy :: FilePath -> IO ()
 taggy fp = do
   content <- T.readFile fp
-  either (\s -> putStrLn $ "couldn't parse: " ++ s) 
-         (mapM_ print) 
+  either (\s -> putStrLn $ "couldn't parse: " ++ s)
+         (mapM_ print)
          (eitherResult $ run True content)
 ```
 
