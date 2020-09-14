@@ -1,7 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Text.Taggy.Entities
-  (convertEntities) where
+  (convertEntities, convertGcideEntities) where
 
 import Control.Applicative
 import Control.Monad
@@ -10,6 +10,7 @@ import Data.Monoid
 import qualified Data.HashMap.Strict as HM
 import qualified Data.Text as T
 import qualified Data.Attoparsec.Text as Atto
+import Data.Attoparsec.Text ((<?>))
 
 -- | Convert all the (currently supported)
 --   HTML entities to their corresponding
@@ -18,6 +19,22 @@ convertEntities :: T.Text -> T.Text
 convertEntities t =
     either (const t) T.concat
   $ Atto.parseOnly entityConverter t
+
+convertGcideEntities :: T.Text -> T.Text
+convertGcideEntities t =
+  either (const t) T.concat $ Atto.parseOnly gcideEntityConverter t
+
+test = convertEntities . convertGcideEntities $  "&quot;\\'d7 &quot;hello orld\\'d6&quot; aoeu \\'d3\\'d5&quot;"
+
+gcideEntityConverter :: Atto.Parser [T.Text]
+gcideEntityConverter = do
+  t <- Atto.manyTill Atto.anyChar (Atto.string "\\'" <|> (const "" <$> Atto.endOfInput))
+  eof <- Atto.atEnd
+  let t' = T.pack t
+  if eof
+     then return [t']
+     else do e <- gcideEntity
+             (T.concat [t' , e] :) <$> gcideEntityConverter
 
 entityConverter :: Atto.Parser [T.Text]
 entityConverter = do
@@ -62,6 +79,15 @@ entity = (flip HM.lookup htmlEntities <$> go "" 8)
                           if done
                             then mzero
                             else go (s <> T.singleton c) (n-1)
+
+-- | Expects entity prefix to have already been discarded/parsed.
+gcideEntity :: Atto.Parser T.Text
+gcideEntity = do
+--  Atto.string "\\'" <?> "gcide entity prefix"
+  hex <- Atto.take 2
+  case HM.lookup hex gcideEntities of
+    Just unicode -> return unicode
+    Nothing      -> return $ "\\'" <> hex
 
 htmlEntities :: HM.HashMap T.Text T.Text
 htmlEntities = HM.fromList $
@@ -320,3 +346,83 @@ htmlEntities = HM.fromList $
   , ("hearts", "\9829")
   , ("diams", "\9830")
   ]
+
+-- | Table generated from gcide-0.51/webfont.txt (specifically the table of
+-- custom escape sequences).
+--
+-- The keys are hex numbers and the values are their corresponding unicode
+-- characters.
+gcideEntities :: HM.HashMap T.Text T.Text
+gcideEntities =
+  HM.fromList
+    $ [ ("80", "Ç")
+      , ("81", "ü")
+      , ("82", "é")
+      , ("83", "â")
+      , ("84", "ä")
+      , ("85", "à")
+      , ("86", "å")
+      , ("87", "ç")
+      , ("88", "ê")
+      , ("89", "ë")
+      , ("8a", "è")
+      , ("91", "æ")
+      , ("92", "Æ")
+      , ("93", "ô")
+      , ("94", "ö")
+      , ("a4", "ñ")
+      , ("a6", "⅔")
+      , ("a7", "⅓")
+      , ("a9", "˝")
+      , ("ab", "½")
+      , ("ac", "¼")
+      , ("b0", " ")
+      , ("b4", "´")
+      , ("b5", "☞")
+      , ("b6", "˝")
+      , ("b7", "´")
+      , ("b8", "”")
+      , ("ba", "‖")
+      , ("bc", "§")
+      , ("bd", "“")
+      , ("be", "ā")
+      , ("bf", "‘")
+      , ("c0", "ṉ")
+      , ("c1", "♯")
+      , ("c2", "♭")
+      , ("c3", "–")
+      , ("c4", "―")
+      , ("c5", "t")
+      , ("c6", "ī")
+      , ("c7", "ē")
+      , ("c8", "ḍ")
+      , ("c9", "ṇ")
+      , ("ca", "ṭ")
+      , ("cb", "ĕ")
+      , ("cc", "ĭ")
+      , ("ce", "ŏ")
+      , ("cf", "‐")
+      , ("d0", "—")
+      , ("d2", "œ")
+      , ("d3", "ō")
+      , ("d4", "ū")
+      , ("d5", "ǒ")
+      , ("d6", "ǣ")
+      , ("d7", "ō")
+      , ("d8", "‖")
+      , ("dc", "ŭ")
+      , ("dd", "ă")
+      , ("de", "˘")
+      , ("df", "ȳ")
+      , ("e5", "ȧ")
+      , ("e7", "h")
+      , ("eb", "ð")
+      , ("ed", "þ")
+      , ("ee", "ã")
+      , ("f4", "ȝ")
+      , ("f7", "≈")
+      , ("f8", "°")
+      , ("f9", "•")
+      , ("fa", "·")
+      , ("fb", "√")
+      ]

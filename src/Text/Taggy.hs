@@ -6,7 +6,7 @@
 -- License      : BSD3
 -- Maintainer   : alpmestan@gmail.com
 -- Stability    : experimental
--- 
+--
 -- /taggy/ is a simple package for parsing HTML (and should work with XML)
 -- written on top of the <http://hackage.haskell.org/package/attoparsec attoparsec>
 -- library, which makes it one of the most efficient (space and time consumption wise)
@@ -38,13 +38,13 @@
 --   or just transform some existing DOM tree
 --   and want to turn it into a 'Data.Text.Lazy.Text'
 --   head to "Text.Taggy.Renderer" and look at 'Text.Taggy.Renderer.render'.
-module Text.Taggy 
+module Text.Taggy
   ( -- * Exported modules
     module Text.Taggy.Types
   , module Text.Taggy.Parser
   , module Text.Taggy.DOM
   , module Text.Taggy.Renderer
-  ) where 
+  ) where
 
 import Text.Taggy.Types
 import Text.Taggy.Parser
@@ -56,10 +56,11 @@ import Text.RawString.QQ
 import qualified Data.Text as T
 import qualified Data.Text.IO as T
 import Data.Attoparsec.Text.Lazy (Result(..))
+import Text.Taggy.Entities
 
 t :: Text
 t = "<p>\n<q>God gave them over to a <qex>reprobate</qex> mind.</q>\n<rj><qau>Rom. i. 28.</qau></rj>\n[<source>1913 Webster</source>]</p>\n</wrapper>"
-   
+
 brokeAF :: Text
 brokeAF = [r|<wrapper><p>[<source>1913 Webster</source>]</p>
 <q>God gave them over to a <qex>reprobate</qex> mind.
