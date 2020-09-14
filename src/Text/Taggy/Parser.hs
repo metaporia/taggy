@@ -114,9 +114,14 @@ tagclose = do
 tagtext :: Bool -> Parser Tag
 tagtext b = (TagText . if b then convertEntities else id) `fmap` takeWhile1 (/='<')
 
-tagtextGcide :: Bool -- convert html entities
-             -> Parser Tag
-tagtextGcide html = (TagText . if html then convertEntities else id . convertGcideEntities) <$> takeWhile1 (/='<')
+tagtextGcide
+  :: Bool -- convert html entities
+  -> Parser Tag
+tagtextGcide html =
+  TagText
+    .   (if html then convertEntities else id)
+    .   convertGcideEntities
+    <$> takeWhile1 (/= '<')
 
 attributes :: Bool -> Parser ([Attribute], Bool)
 attributes cventities = postProcess `fmap` go emptyL

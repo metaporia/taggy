@@ -61,8 +61,7 @@ import Text.Taggy.Entities
 t :: Text
 t = "<p>\n<q>God gave them over to a <qex>reprobate</qex> mind.</q>\n<rj><qau>Rom. i. 28.</qau></rj>\n[<source>1913 Webster</source>]</p>\n</wrapper>"
 
-brokeAF :: Text
-brokeAF = [r|<wrapper><p>[<source>1913 Webster</source>]</p>
+brokeAF = [r|\'d8<wrapper><p>[<source>1913 Webster</source>]</p>
 <q>God gave them over to a <qex>reprobate</qex> mind.
 </q>
 <rj><qau>Rom. i. 28.</qau></rj><br/
