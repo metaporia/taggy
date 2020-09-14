@@ -174,13 +174,17 @@ attribute cventities = do
 
 htmlWith :: Bool -> Parser [Tag]
 htmlWith cventities = go
-
-  where go = do
-          finished <- atEnd
-          if finished
-            then return []
-            else do t <- tag cventities
-                    (t:) `fmap` go
+ where
+  go = do
+    finished <- atEnd
+    if finished
+      then return []
+      else do
+        t <- tag cventities
+        case t of
+          TagOpen "p" _ _ -> go
+          TagClose "p"    -> go
+          _               -> (t :) <$> go
 
 tag :: Bool -> Parser Tag
 tag cventities = tagStructured cventities <|> tagtextGcide cventities
