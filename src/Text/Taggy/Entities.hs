@@ -97,15 +97,14 @@ gcideEntity = do
 sgmlEntity :: Atto.Parser T.Text
 sgmlEntity = do
   Atto.char '<'
-  entityName <- Atto.takeWhile1 (\c -> c /= ' ' && c /= '<' && c /= '\\' && c /= '/' && c /= '>')
+  entityName <- Atto.takeWhile1 (\c -> c /= ' ' && c /= '<' && c /= '\\' && c /= '/' && c /= '>') <?> "sgmlEntity: takeWhile1"
   Atto.char '/'
   mnext <- Atto.peekChar
   case mnext of
     Just '>' -> fail "expected SGML-entity but found self-closing html tag"
-    _ -> mempty
-  case HM.lookup entityName sgmlEntities of
-    Just unicode -> return unicode
-    Nothing -> fail $ "expected valid sgml entity: found" <> T.unpack entityName
+    _ -> case HM.lookup entityName sgmlEntities of
+           Just unicode -> return unicode
+           Nothing -> fail $ "expected valid sgml entity: found" <> T.unpack entityName
 
 
 
