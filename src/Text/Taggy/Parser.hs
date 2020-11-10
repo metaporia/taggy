@@ -65,7 +65,7 @@ delimitedByTag t cventities = do
 
 tagcomment :: Parser Tag
 tagcomment = do
-  (_, comm, _) <- delimitedBy "<!--" "-->"
+  (_, comm, _) <- delimitedBy "<!--" "-->" <|> delimitedBy "<--" "-->"
   return $ TagComment comm
 
 tagscript :: Bool -> Parser Tag
@@ -191,7 +191,8 @@ tag cventities = tagStructured cventities <|> tagtextGcide cventities
 
 tagStructured :: Bool -> Parser Tag
 tagStructured b =
-      tagcomment
+  (TagText <$> sgmlEntity)
+  <|> tagcomment
   <|> tagscript b
   <|> tagstyle b
   <|> tagopen b

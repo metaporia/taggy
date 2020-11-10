@@ -1,11 +1,12 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Text.Taggy.Entities
-  (convertEntities, convertGcideEntities) where
+  (convertEntities, convertGcideEntities, sgmlEntity) where
 
 import Control.Applicative
 import Control.Monad
 import Data.Char
+import Data.Maybe (fromMaybe)
 import Data.Monoid
 import qualified Data.HashMap.Strict as HM
 import qualified Data.Text as T
@@ -35,6 +36,10 @@ gcideEntityConverter = do
      then return [t']
      else do e <- gcideEntity
              (T.concat [t' , e] :) <$> gcideEntityConverter
+
+--sgmlEntityConverter :: Atto.Parser [T.Text]
+--sgmlEntityConverter = do
+--  t <- Atto.manyTill Atto.any
 
 entityConverter :: Atto.Parser [T.Text]
 entityConverter = do
@@ -88,6 +93,22 @@ gcideEntity = do
   case HM.lookup hex gcideEntities of
     Just unicode -> return unicode
     Nothing      -> return $ "\\'" <> hex
+
+sgmlEntity :: Atto.Parser T.Text
+sgmlEntity = do
+  Atto.char '<'
+  entityName <- Atto.takeWhile1 (\c -> c /= ' ' && c /= '<' && c /= '\\' && c /= '/' && c /= '>')
+  Atto.char '/'
+  mnext <- Atto.peekChar
+  case mnext of
+    Just '>' -> fail "expected SGML-entity but found self-closing html tag"
+    Nothing -> mempty
+  case HM.lookup entityName sgmlEntities of
+    Just unicode -> return unicode
+    Nothing -> fail $ "expected valid sgml entity: found" <> T.unpack entityName
+
+
+
 
 htmlEntities :: HM.HashMap T.Text T.Text
 htmlEntities = HM.fromList $
@@ -426,3 +447,97 @@ gcideEntities =
       , ("fa", "·")
       , ("fb", "√")
       ]
+
+-- also for gcide
+sgmlEntities :: HM.HashMap T.Text T.Text
+sgmlEntities = HM.fromList
+  [ ("Cced"  , "Ç")
+  , ("uum"   , "ü")
+  , ("eacute", "é")
+  , ("acir"  , "â")
+  , ("aum"   , "ä")
+  , ("agrave", "à")
+  , ("aring" , "å")
+  , ("cced"  , "ç")
+  , ("ecir"  , "ê")
+  , ("eum"   , "ë")
+  , ("egrave", "è")
+  , ("ium"   , "ï")
+  , ("icir"  , "î")
+  , ("igrave", "ì")
+  , ("Aum"   , "Ä")
+  , ("Eacute", "É")
+  , ("ae"    , "æ")
+  , ("AE"    , "Æ")
+  , ("ocir"  , "ô")
+  , ("oum"   , "ö")
+  , ("ograve", "ò")
+  , ("ucir"  , "û")
+  , ("ugrave", "ù")
+  , ("yum"   , "ÿ")
+  , ("Oum"   , "Ö")
+  , ("Uum"   , "Ü")
+  , ("pound" , "£")
+  , ("aacute", "á")
+  , ("iacute", "í")
+  , ("oacute", "ó")
+  , ("uacute", "ú")
+  , ("ntil"  , "ñ")
+  , ("Ntil"  , "Ñ")
+  , ("frac23", "⅔")
+  , ("frac13", "⅓")
+  , ("sec"   , "˝")
+  , ("frac12", "½")
+  , ("frac14", "¼")
+  , ("?"     , "(?)")
+  , ("hand"  , "☞")
+  , ("bprime", "˝")
+  , ("prime" , "´")
+  , ("rdquo" , "”")
+  , ("sect"  , "§")
+  , ("ldquo" , "“")
+  , ("amac"  , "ā")
+  , ("lsquo" , "‘")
+  , ("nsm"   , "ṉ")
+  , ("sharp" , "♯")
+  , ("flat"  , "♭")
+  , ("imac"  , "ī")
+  , ("emac"  , "ē")
+  , ("dsdot" , "ḍ")
+  , ("nsdot" , "ṇ")
+  , ("tsdot" , "ṭ")
+  , ("ecr"   , "ĕ")
+  , ("icr"   , "ĭ")
+  , ("ocr"   , "ŏ")
+  , ("OE"    , "Œ")
+  , ("oe"    , "œ")
+  , ("omac"  , "ō")
+  , ("umac"  , "ū")
+  , ("ocar"  , "ǒ")
+  , ("aemac" , "ǣ")
+  , ("oemac" , "ō")
+  , ("ucr"   , "ŭ")
+  , ("acr"   , "ă")
+  , ("cre"   , "˘")
+  , ("ymac"  , "ȳ")
+  , ("adot"  , "ȧ")
+  , ("edh"   , "ð")
+  , ("thorn" , "þ")
+  , ("atil"  , "ã")
+  , ("ndot"  , "ṅ")
+  , ("rsdot" , "ṛ")
+  , ("yogh"  , "ȝ")
+  , ("mdash" , "—")
+  , ("divide", "÷")
+  , ("deg"   , "°")
+  , ("middot", "•")
+  , ("root"  , "√")
+  , ("th"    , "t") -- FIXME should depict "th" sound as in "the"
+  , ("asl"   , "a")
+  , ("esl"   , "e")
+  , ("isl"   , "i")
+  , ("usl"   , "u")
+  , ("osl"   , "o")
+  , ("adot"  , "ȧ")
+  , ("br"    , "\n") -- FIXME replace with "" or "\n"?
+  ]
