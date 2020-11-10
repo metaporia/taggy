@@ -102,7 +102,7 @@ sgmlEntity = do
   mnext <- Atto.peekChar
   case mnext of
     Just '>' -> fail "expected SGML-entity but found self-closing html tag"
-    Nothing -> mempty
+    _ -> mempty
   case HM.lookup entityName sgmlEntities of
     Just unicode -> return unicode
     Nothing -> fail $ "expected valid sgml entity: found" <> T.unpack entityName
