@@ -145,6 +145,7 @@ htmlEntities = HM.fromList $
   , ("ordm", "\186")
   , ("raquo", "\187")
   , ("frac14", "\188")
+  , ("frac15", "1/5")
   , ("frac12", "\189")
   , ("frac1x12", "1/12")
   , ("frac34", "\190")
