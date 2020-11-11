@@ -715,5 +715,6 @@ sgmlEntities = HM.fromList
   , ("Scorpio", "♏")
   , ("Crev", "<Crev/")
   , ("asterism", "⁂")
+
   ]
 
