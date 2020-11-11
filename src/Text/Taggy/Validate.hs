@@ -86,4 +86,4 @@ validateCide' cideLetter = do
     Right _    -> []
           --validationErrToTypoTemplate (Just cideLetter) verr
 
-test = validateCide 'Z'
+test = validateCide 'A'
