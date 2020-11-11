@@ -463,6 +463,7 @@ gcideEntities =
 --  - <ai/: can't find unicode ai ligature
 --  - <als/: ??
 --  - <Crev/: ?? abbr for a thousand units
+--  - <sb/: ?? dico omits it
 sgmlEntities :: HM.HashMap T.Text T.Text
 sgmlEntities = HM.fromList
   [ ("omega"  , "\969")
@@ -715,6 +716,6 @@ sgmlEntities = HM.fromList
   , ("Scorpio", "♏")
   , ("Crev", "<Crev/")
   , ("asterism", "⁂")
-
+  , ("sb", "")
   ]
 
