@@ -666,6 +666,7 @@ sgmlEntities = HM.fromList
   , ("asper"        , "a\787")
   , ("spasp"        , "\8190")
   , ("udd"          , "u")
+  , ("frac1000x1434", "1000/1434")
   , ("frac1x2500"   , "1/25000")
   , ("frac1x10000"  , "1/10000")
   , ("frac1x1000"   , "1/1000")
@@ -742,7 +743,6 @@ sgmlEntities = HM.fromList
   , ("Leo"          , "♌")
   , ("Sagittarius"  , "♐")
   , ("sagittarius"  , "♐")
-  , ("frac1000x1434", "1000/1434")
   , ("Capricornus"  , "♑")
   , ("Capricorn"    , "♑")
   , ("Aquarius"     , "♒")
@@ -777,7 +777,6 @@ sgmlEntities = HM.fromList
     ) -- N small capital
   , ("bar", "|")
   ]
-
 
 
 -- TODO 
