@@ -741,6 +741,7 @@ sgmlEntities = HM.fromList
   , ("Cancer"       , "♋")
   , ("Leo"          , "♌")
   , ("Sagittarius"  , "♐")
+  , ("sagittarius"  , "♐")
   , ("Capricornus"  , "♑")
   , ("Capricorn"    , "♑")
   , ("Aquarius"     , "♒")
