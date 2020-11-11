@@ -742,6 +742,7 @@ sgmlEntities = HM.fromList
   , ("Leo"          , "♌")
   , ("Sagittarius"  , "♐")
   , ("sagittarius"  , "♐")
+  , ("frac1000x1434", "1000/1434")
   , ("Capricornus"  , "♑")
   , ("Capricorn"    , "♑")
   , ("Aquarius"     , "♒")
