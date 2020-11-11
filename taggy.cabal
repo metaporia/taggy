@@ -61,8 +61,10 @@ library
                        attoparsec >=0.11,
                        vector >=0.7,
                        containers,
-                       unordered-containers >= 0.2
-                     , raw-strings-qq >= 1
+                       unordered-containers >= 0.2,
+                       bytestring >=0.10.8.1,
+                       pretty-simple >=2,
+                       raw-strings-qq >= 1
   hs-source-dirs:      src
   default-language:    Haskell2010
   ghc-options:         -Wall -O2 -fno-warn-unused-do-bind -funbox-strict-fields
@@ -75,7 +77,7 @@ executable taggy
                        text >= 1,
                        attoparsec >=0.12,
                        taggy
-  ghc-options:         -Wall -O2 -fno-warn-unused-do-bind
+  -- ghc-options:         -Wall -O2 -fno-warn-unused-do-bind
   -- ghc-prof-options:    -Wall -prof -auto-all -O2 -fno-warn-unused-do-bind -rtsopts "-with-rtsopts=-sstderr -p"
   default-language:    Haskell2010
 

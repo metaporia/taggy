@@ -3,7 +3,14 @@
 # For more information, please see the documentation at:
 #   https://docs.haskellstack.org/en/stable/lock_files
 
-packages: []
+packages:
+- completed:
+    hackage: pretty-simple-2.0.0.0@sha256:52ff9a58a952c8b8638a610f36a711e8b76ed122625530affb2b51dfb06717a3,3342
+    pantry-tree:
+      size: 1228
+      sha256: 2cce7ef0af6929e155f7e4eaeb91e0feac5e843fd7781f21661078ae418dccca
+  original:
+    hackage: pretty-simple-2.0.0.0
 snapshots:
 - completed:
     size: 533451
