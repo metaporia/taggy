@@ -693,6 +693,7 @@ sgmlEntities = HM.fromList
   , ("frac18"       , "1/8")
   , ("frac19"       , "1/9")
   , ("frac95"       , "9/5")
+  , ("frac56"       , "5/6")
   , ("frac59"       , "5/9")
   , ("frac58"       , "5/8")
   , ("frac32"       , "3/2")
